@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lanzador de Bot de Discord Para DEV ACTIVE BADGE</title>
+    <link rel="icon" href="https://i.ibb.co/7NX9kC0/Orange-Phoenix-Animal-Gaming-Logo.png">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #000000;
+            color: #5865F2;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 20px;
+            flex: 1;
+        }
+
+        header {
+            background-color: #313338;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        header img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        header h1 {
+            color: #5865F2;
+            margin: 0;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        form {
+            background-color: #313338;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 8px 8px #5865F2;
+        }
+
+        form label {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        input {
+            width: calc(100% - 22px);
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 16px;
+            border: 5px solid #5865F2;
+            border-radius: 5px;
+            background-color: #313338;
+            color: #5865F2;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #5865F2;
+            color: #000000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #000000;
+            color: #5865F2
+        }
+
+        .instruction {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #313338;
+            border-radius: 10px;
+            box-shadow: 0 8px 8px #5865F2;
+        }
+
+        .instruction h2 {
+            margin-top: 0;
+            color: #ffffff;
+        }
+
+        .instruction ol {
+            padding-left: 20px;
+        }
+
+        .instruction li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .instruction a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .instruction a:hover {
+            text-decoration: underline;
+        }
+
+        #responseMessage {
+            margin-top: 30px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .success a {
+            color: #4CAF50;
+            text-decoration: underline;
+        }
+
+        .success a:hover {
+            color: #45a049;
+        }
+
+        footer {
+            background-color: #313338;
+            color: #5865F2;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 14px;
+        }
+
+        footer a {
+            color: #5865F2;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://raw.githubusercontent.com/MaisLaufen/easy-discord-dev-badge/refs/heads/master/assets/static/easy_discord_badge_logo.png" alt="Discord Icon">
+        <h1>Conseguir Insignia De Desarrollador Activo</h1>
+    </header>
+    <div class="container">
+        <form id="botForm">
+            <label for="token">Ingresa el token de tu bot:</label>
+            <input type="text" id="token" name="token" placeholder="Pega tu token aquí..." required>
+            <button type="submit">Iniciar Bot</button>
+        </form>
+        <p id="responseMessage"></p>
+        
+        <div class="instruction">
+            <h2>Instrucciones</h2>
+            <ol>
+                <li><strong>Paso 1:</strong><br>Navegue hasta el <a href="https://discord.com/developers/" target="_blank">Portal para desarrolladores de Discord</a>, cree una nueva aplicación y configure su bot.</li>
+                <li><strong>Paso 2:</strong><br>¡Pega tu token de Discord y asegúrate de no compartirlo!</li>
+                <li><strong>Paso 3:</strong><br>Invita al bot a tu servidor usando la URL proporcionada.</li>
+                <li><strong>Paso 4:</strong><br>Pruebe el bot con el comando /probar en su servidor.</li>
+                <li><strong>Paso 5:</strong><br>Reclama tu insignia <a href="https://discord.com/developers/active-developer" target="_blank">Aquí</a>.</li>
+            </ol>
+        </div>
+    </div>
+
+    <footer>
+        GitHub - <a href="https://github.com/LZRS1" target="_blank">https://github.com/LZRS1</a>
+    </footer>
+
+    <script>
+        const form = document.getElementById("botForm");
+        const responseMessage = document.getElementById("responseMessage");
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const token = document.getElementById("token").value;
+
+            try {
+                const response = await fetch("/.netlify/functions/handleRequest", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ token })
+});
+
+                const data = await response.json();
+                if (data.message.startsWith("Success")) {
+                    const urlMatch = data.message.match(/https?:\/\/[^\s]+/);
+                    const inviteLink = urlMatch ? <a href="${urlMatch[0]}" target="_blank">${urlMatch[0]}</a> : '';
+                    responseMessage.innerHTML = <span class="éxitoso">${data.message.replace(urlMatch ? urlMatch[0] : '', inviteLink)}</span>;
+                } else {
+                    responseMessage.textContent = data.message;
+                    responseMessage.className = "error";
+                }
+            } catch (error) {
+                responseMessage.textContent = "Se produjo un error: " + error.message;
+                responseMessage.className = "error";
+            }
+        });
+    </script>
+</body>
+</html>
